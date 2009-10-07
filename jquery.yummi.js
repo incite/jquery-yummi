@@ -82,7 +82,7 @@
           event.preventDefault();
           if (element.val() == "") element.parents('form').trigger('submit');
           if (focused().length) {
-            add(focused());
+            add(focused().text());
             hideResults();
             clearFocus()
           }
@@ -94,7 +94,7 @@
         default:
           showResults()
           clearTimeout(timeout);
-          timeout = setTimeout(function() { suggestFor(element.val()) }, 100);
+          timeout = setTimeout(function() { suggestFor(element.wordAtCaret()) }, 100);
           break;
       }
     }
