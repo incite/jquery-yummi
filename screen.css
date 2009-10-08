@@ -25,7 +25,7 @@ a:hover { text-decoration: underline }
   border-bottom: 1px solid #999;
   border-right: 1px solid #999;
   margin-right: 20px;
-  -wekit-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
   -moz-transform: rotate(-10deg);
   transform: rotate(-10deg);
 }
