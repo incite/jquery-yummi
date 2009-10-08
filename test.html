@@ -22,7 +22,7 @@
       </div>
       <h1>jQuery Delicious™ style auto-completion.</h1>
       <p>
-        <a href="http://incite.github.com/jquery-yummi/jquery.yummi.zip">Download link</a>, or
+        <a href="jquery.yummi.zip">Download link</a>, or
         <a href="http://github.com/incite/jquery-yummi">browse the code on Github</a>.
       </p>
       <h2>Why yet another auto-complete plugin?</h2>
@@ -33,6 +33,12 @@
         web interface</a> auto-complete seems to do it. It only operates on the last word.
         Also, having to install <a href="http://developer.yahoo.com/yui/">YUI</a> to be able
         to use it isn't an option as far as I'm concerned.
+      </p>
+      <p>
+        Other jQuery auto-complete plugins I found seem to rely on the current value in the 
+        text field. That's less than adequate, as in circumstances where you're dealing
+        with a set of values (e.g.: auto-completion for tags though a single text field),
+        you won't be able to use it past the first tag you enter.
       </p>
       <h2>Demo:</h2>
       <form action="#" method="post" accept-charset="utf-8">
@@ -71,6 +77,21 @@
       <p>
         The example above assumes you're getting JSON back as the response type, and we're looking at a clean
         array of strings coming from the url "/fruits.json".
+      </p>
+      <h2>Installation:</h2>
+      <p>
+        <a href="jquery.yummi.zip">Download</a>. 
+        Add the Javascript (point the "src" attribute to wherever you're hosting the file) to the &lt;head&gt; tag
+      </p>
+      <code>
+        &lt;script type="text/javascript" src="jquery.yummi.js"&gt;&lt;/script&gt;
+      </code>
+      <p>And the CSS</p>
+      <code>
+        &lt;link rel="stylesheet" href="yummi.css" type="text/css" /&gt;
+      </code>
+      <p>
+        You can style yummi by editing the <strong>yummi.css</strong> file.
       </p>
       <h2>Assumptions made:</h2>
       <ul>
