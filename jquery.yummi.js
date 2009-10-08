@@ -181,8 +181,9 @@
 
     function insertACResultsList() {
       element.before('<div class="yummi-results"></div>');
-      results = element.parents().find('.yummi-results');
+      results = element.prev('.yummi-results');
       var marginTop = element.height() 
+        + element.margin().top
         + element.padding().top 
         + element.padding().bottom  
         + element.border().top
