@@ -16,9 +16,8 @@
     return string.join('');
   }
   
+  // http://www.webdeveloper.com/forum/showthread.php?t=74982  
   $.fn.caretPos = function(element) {
-    // http://www.webdeveloper.com/forum/showthread.php?t=74982
-    // and many, many other references
     var pos;
     if (document.selection) {
       var sel = document.selection.createRange();
@@ -39,6 +38,7 @@
   }
   $.fn.wordAtCaret = function() { return $.wordAtCaret(this.get(0)) }
   
+  // http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
   $.fn.setCursorPosition = function(pos) {
     if ($(this).get(0).setSelectionRange) {
       $(this).get(0).setSelectionRange(pos, pos);
@@ -54,16 +54,21 @@
   $.yummi = function(element, options) {
     var element = $(element);
     var results, timeout;
-    var defaults = {collection: ['the', 'fbi', 'is', 'after', 'you']};
+    var defaults = {collection: ['apple', 'carrot', 'banana', 'lemon', 'melon', 'onion', 'beetroot', 'orange']};
     var options = $.extend(defaults, options);
+    element.data('yummi.collection', (options.collection || defaults.collection));
+    if (element.data('yummi.active')) return false; // let the collection be updated and bail out
     
     // Private
     var KEY = { 
       UP: 38, 
-      DOWN: 40, 
+      DOWN: 40,
+      RIGHT: 39,
+      LEFT: 37,
       TAB: 9,
-      RETURN: 13, 
-      ESC: 27, 
+      RETURN: 13,
+      ESC: 27,
+      SPACE: 32
     };  
     
     function keyDownHandler(event) {
@@ -76,8 +81,6 @@
           event.preventDefault();
           stepDown();
           break;
-        case KEY.TAB:
-          if (element.val() == "") break;
         case KEY.RETURN:
           event.preventDefault();
           if (element.val() == "") element.parents('form').trigger('submit');
@@ -91,8 +94,24 @@
           hideResults();
           clearFocus();
           break;
+        case KEY.TAB:
+        case KEY.RIGHT:
+          if (focused().length) {
+            event.preventDefault();
+            add(focused().text());
+            hideResults();
+            clearFocus();
+          }
+          break;
+        case KEY.SPACE:
+          if (autoCompleting()) {
+            hideResults();
+            clearFocus();
+          }
+          break;
+        case KEY.LEFT:
+          break; // do nothing
         default:
-          showResults()
           clearTimeout(timeout);
           timeout = setTimeout(function() { suggestFor(element.wordAtCaret()) }, 100);
           break;
@@ -100,20 +119,23 @@
     }
     
     function suggestFor(text) {
-      if (results.find('.result').length) results.find('.result').remove();
+      if (text == '' || text == undefined) return false;
+      if (results.find('> div').length) results.find('> div').remove();
       var regex = new RegExp('^' + text, 'ig');
-      var relevant = $.grep(options.collection, function(entry) { return regex.test(entry) })
-      if (relevant.length) { // results found
+      var matches = $.grep(element.data('yummi.collection'), function(entry) { return regex.test(entry) })
+      if (matches.length) { // results found
         if (results.find('.result').length) results.find('.result').remove();
-        $.each(relevant, function(index, result) {
-          results.append('<div class="result">' + result + '</div>');
+        $.each(matches, function(index, match) {
+          var result = $('<div class="result">' + match + '</div>');
+          result
+            .mouseover(function() { setFocus(this) })
+            .click(function() { add($(this).text()) });
+          results.append(result);
         })
       } else {
+        results.append('<div class="no_results">No matches found</div>');
       }
-      console.log(relevant)
-      // $.each(relevant, function(index, result) {
-      //   console.log(result);
-      // })
+      showResults();
     }
     
     function showResults() {
@@ -123,6 +145,7 @@
     function hideResults() { results.hide() }
     function clearFocus() { results.find('.focused').removeClass('focused') }
     function focused() { return results.find('.focused') }
+    function autoCompleting() { return results.is(':visible') }
     
     function setFocus(result) { 
       if (focused().length) clearFocus();
@@ -150,7 +173,6 @@
       value = value.substr(0, position) + result + value.substr(position + element.wordAtCaret().length);
       element.val(value);
       element.setCursorPosition(value.length);
-      // var caret      
     }
     
     function getCaretWordIndex() {    
@@ -158,7 +180,7 @@
     }
 
     function insertACResultsList() {
-      element.before('<div class="yummi-results"><div class="result">omg</div><div class="result">omg2</div></div>');
+      element.before('<div class="yummi-results"></div>');
       results = element.parents().find('.yummi-results');
       var marginTop = element.height() 
         + element.padding().top 
@@ -167,22 +189,15 @@
         + element.border().bottom;
       results.margin({top: marginTop - 1}) // -1 so it appears slightly attached to the text field
     }
-    
-    $.extend($.yummi, { getca: function() { return getCaretWordIndex() }, add: function(result) { return add(result) }})
-    
-    element.keydown(keyDownHandler);
-    element.blur(function() { hideResults(); clearFocus() });
+        
     insertACResultsList();
-    element.attr('autocomplete', 'off');    
+    element
+      .keydown(keyDownHandler)
+      .blur(function() { hideResults(); clearFocus() })
+      .attr('autocomplete', 'off')
+      .data('yummi.active', true);
   }
     
   $.fn.yummi = function(options) { return this.each(function() { $.yummi(this, options) }) }
   
 })(jQuery);
-
-// function getCaretWordIndex() {    
-//   var element = $(':text:first');
-//   var value = element.val();
-//   return value.substrUntil(element.caretPos, ' ', true).length;
-//   // return value.substrUntil(((element.caretPos == value.length) ? element.caretPos - 1 : element.caretPos), ' ', true).length;
-// }
