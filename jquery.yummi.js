@@ -3,40 +3,38 @@
     var string = [];
     var regex = new RegExp(until, 'ig');
     if (backwards) index--; // reverse the caret direction, pretty much
-    while(this[index]) {
-      if (regex.test(this[index])) break;
+    while(this.charAt(index)) {
+      if (regex.test(this.charAt(index))) break;
       if (backwards) {
-        string.unshift(this[index]);
+        string.unshift(this.charAt(index));
         index--;
       } else {
-        string.push(this[index]);
+        string.push(this.charAt(index));
         index++;
       }
     }
     return string.join('');
   }
   
-  // http://www.webdeveloper.com/forum/showthread.php?t=74982  
-  $.fn.caretPos = function(element) {
+  $.fn.caretPos = function() {
     var pos;
     if (document.selection) {
-      var sel = document.selection.createRange();
-      sel.moveStart('character', this.get(0).value.length);
-      pos = sel.text.length;
+      var sel = document.selection.createRange().duplicate();
+      sel.moveEnd('character', this.get(0).value.length);
+      pos = this.get(0).value.lastIndexOf(sel.text);
     } else {
       pos = this.get(0).selectionStart;
     }
     return pos;
   }
   
-  $.wordAtCaret = function(element) {
-    var value = $(element).val();
-    var index = $(element).caretPos();
+  $.fn.wordAtCaret = function() {
+    var value = this.val();
+    var index = this.caretPos();
     var forward = value.substrUntil(index, ' ');
     var backward = value.substrUntil(index, ' ', true);
     return backward + forward;
   }
-  $.fn.wordAtCaret = function() { return $.wordAtCaret(this.get(0)) }
   
   // http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
   $.fn.setCursorPosition = function(pos) {
