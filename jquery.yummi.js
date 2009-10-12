@@ -93,20 +93,13 @@
           clearFocus();
           break;
         case KEY.TAB:
-        case KEY.RIGHT:
-          if (focused().length) {
-            event.preventDefault();
-            add(focused().text());
-            hideResults();
-            clearFocus();
-          }
-          break;
         case KEY.SPACE:
           if (autoCompleting()) {
             hideResults();
             clearFocus();
           }
           break;
+        case KEY.RIGHT:
         case KEY.LEFT:
           break; // do nothing
         default:
