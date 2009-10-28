@@ -79,6 +79,14 @@
           event.preventDefault();
           stepDown();
           break;
+        case KEY.TAB:
+          if (focused().length) {
+            add(focused().text());
+            hideResults();
+            clearFocus();
+            event.preventDefault();
+          };
+          break;
         case KEY.RETURN:
           event.preventDefault();
           if (element.val() == "") element.parents('form').trigger('submit');
@@ -92,7 +100,6 @@
           hideResults();
           clearFocus();
           break;
-        case KEY.TAB:
         case KEY.SPACE:
           if (autoCompleting()) {
             hideResults();
